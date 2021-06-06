@@ -1,0 +1,13 @@
+conf t
+interface f0/0 
+no shutdown 
+interface f0/0.1  
+encapsulation dot1Q 1 native 
+ip address 10.1.1.230 255.255.255.0  
+interface f0/0.2  
+encapsulation dot1Q 2 
+ip address 10.2.2.230 255.255.255.0  
+interface f0/0.3  
+encapsulation dot1Q 3 
+ip address 10.3.3.230 255.255.255.0
+end

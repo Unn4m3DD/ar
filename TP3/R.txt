@@ -1,0 +1,68 @@
+# R1
+conf t
+interface loopback 0
+ip address 200.0.0.1 255.255.255.255
+ip ospf 1 area 0
+no shut
+int f0/0
+ip add 200.1.0.1 255.255.255.0
+no shut
+int f0/1
+ip add 192.168.1.254 255.255.255.0
+no shut
+router ospf 1
+network 200.1.0.0 0.0.0.255 area 0
+network 192.168.1.0 0.0.0.255 area 0
+no shut
+
+
+access-list 101 permit ip any 192.168.2.0 0.0.0.255
+route-map To2Through3 permit 10
+match ip address 101
+set ip next-hop 200.1.0.3
+interface f0/1
+ip policy route-map To2Through3
+end
+# PC 1
+ip 192.168.1.1 192.168.1.254
+
+# R2
+conf t
+interface loopback 0
+ip address 200.0.0.2 255.255.255.255
+ip ospf 1 area 0
+no shut
+int f0/0
+ip add 200.1.0.2 255.255.255.0
+no shut
+int f0/1
+ip add 192.168.2.254 255.255.255.0
+ip add 192.168.2.253 255.255.255.0 secondary
+no shut
+router ospf 1
+network 200.1.0.0 0.0.0.255 area 0
+network 192.168.2.0 0.0.0.255 area 0
+no shut
+end
+# PC 2
+ip 192.168.2.2 192.168.2.254
+
+# R3
+conf t
+interface loopback 0
+no shut
+int f0/0
+ip add 200.1.0.3 255.255.255.0
+ip address 200.0.0.3 255.255.255.255
+ip ospf 1 area 0
+no shut
+int f0/1
+ip add 192.168.3.254 255.255.255.0
+no shut
+router ospf 1
+network 200.1.0.0 0.0.0.255 area 0
+network 192.168.3.0 0.0.0.255 area 0
+no shut
+end
+# PC 3
+ip 192.168.3.3 192.168.3.254
